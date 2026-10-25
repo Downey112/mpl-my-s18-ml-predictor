@@ -9,12 +9,15 @@ Features Included:
 1. Complete 56-match Double Round-Robin Regular Season dataset (Weeks 1-8).
 2. Official 8-team macro telemetry (Kills, Deaths, Assists, Gold, Damage,
    Lord, Turtle, Tower across all regular season games).
-3. Chronological Elo & Margin-of-Victory rating tracker + Bradley-Terry
-   Maximum Likelihood team skill estimation.
+3. Chronological Elo rating tracker (series score 2-0 / 2-1 / 1-2 / 0-2 mapped
+   to 1.0 / 0.75 / 0.25 / 0.0) + Bradley-Terry Maximum Likelihood team skill
+   estimation on game-level results.
 4. L2-Regularized Logistic Regression Classifier (implemented via exact
-   Newton-Raphson / IRLS in NumPy, with 7-fold Stratified Cross-Validation)
-   plus a non-linear Feature-Weighted Random Forest / Bagged Decision Stump
-   Ensemble predicting single-game win probability p(A beats B).
+   Newton-Raphson / IRLS in NumPy) plus a Gradient-Boosted Decision Stump
+   Ensemble, both trained on Bo3 match outcomes and evaluated with 8-fold
+   Leave-One-Week-Out Cross-Validation. The match-level probability is
+   rescaled to a single-game probability p(A beats B) and blended with
+   Bradley-Terry, Elo and head-to-head estimates.
 5. Exact Negative-Binomial Bo5 / Bo7 series probability conversion and a
    50,000-iteration Monte Carlo simulation of the MPL MY S18 Hybrid
    Elimination Playoffs bracket (Oct 28 – Nov 1, 2026) to predict M8 World
@@ -24,10 +27,15 @@ Features Included:
 from __future__ import annotations
 
 import math
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
+
+REPO_DIR = Path(__file__).resolve().parent
+DATA_DIR = REPO_DIR / "data"
+ASSETS_DIR = REPO_DIR / "assets"
 
 
 # ---------------------------------------------------------------------------
@@ -303,7 +311,7 @@ class L2LogisticRegression:
         return np.vstack([1.0 - p1, p1]).T
 
 
-class BaggedTreeBoostEnsemble:
+class GradientBoostedStumpEnsemble:
     """
     Non-linear Gradient-Boosted Decision Stump Ensemble in pure NumPy.
     Captures non-linear thresholds in macro differentials (e.g. KDA + Tower diff).
@@ -315,7 +323,7 @@ class BaggedTreeBoostEnsemble:
         self.stumps: List[Tuple[int, float, float, float]] = []
         self.base_log_odds: float = 0.0
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "BaggedTreeBoostEnsemble":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> "GradientBoostedStumpEnsemble":
         p_mean = np.clip(np.mean(y), 1e-4, 1.0 - 1e-4)
         self.base_log_odds = float(np.log(p_mean / (1.0 - p_mean)))
         f_pred = np.full(len(y), self.base_log_odds)
@@ -365,7 +373,7 @@ def fit_bradley_terry_game_ratings(teams: List[str]) -> Dict[str, float]:
     """
     idx = {t: i for i, t in enumerate(teams)}
     n = len(teams)
-    # Prior pseudo-counts (0.5 game win + 0.5 game loss against each opponent for stability)
+    # Weak prior for stability: 0.5 pseudo-win per team and 0.15 pseudo-games per pair
     wins = np.zeros(n) + 0.5
     games_matrix = np.zeros((n, n)) + 0.15
     np.fill_diagonal(games_matrix, 0.0)
@@ -525,7 +533,7 @@ def compute_roc_auc(y_true: np.ndarray, y_prob: np.ndarray) -> float:
 
 def train_and_evaluate_models(
     df_train: pd.DataFrame, feature_cols: List[str]
-) -> Tuple[np.ndarray, np.ndarray, L2LogisticRegression, BaggedTreeBoostEnsemble]:
+) -> Tuple[np.ndarray, np.ndarray, L2LogisticRegression, GradientBoostedStumpEnsemble]:
     """Evaluate via 8-Fold Leave-One-Week-Out Cross-Validation and fit final models."""
     X = df_train[feature_cols].values
     y = df_train["target_win"].values
@@ -543,7 +551,7 @@ def train_and_evaluate_models(
         X_va = (X[val_mask] - mu) / sd
 
         lr_fold = L2LogisticRegression(l2_penalty=2.0).fit(X_tr, y[tr_mask])
-        gb_fold = BaggedTreeBoostEnsemble(n_estimators=80, learning_rate=0.06).fit(X_tr, y[tr_mask])
+        gb_fold = GradientBoostedStumpEnsemble(n_estimators=80, learning_rate=0.06).fit(X_tr, y[tr_mask])
         p_lr_oof[val_mask] = lr_fold.predict_proba(X_va)[:, 1]
         p_gb_oof[val_mask] = gb_fold.predict_proba(X_va)[:, 1]
 
@@ -567,7 +575,7 @@ def train_and_evaluate_models(
     X_scaled = (X - mu_full) / sd_full
 
     lr_full = L2LogisticRegression(l2_penalty=2.0).fit(X_scaled, y)
-    gb_full = BaggedTreeBoostEnsemble(n_estimators=80, learning_rate=0.06).fit(X_scaled, y)
+    gb_full = GradientBoostedStumpEnsemble(n_estimators=80, learning_rate=0.06).fit(X_scaled, y)
 
     print("\n=== Standardized Feature Weights (L2 Logistic Regression) ===")
     for fname, weight in sorted(zip(feature_cols, lr_full.coef_), key=lambda x: abs(x[1]), reverse=True):
@@ -581,7 +589,7 @@ def build_pairwise_game_prob_matrix(
     mu: np.ndarray,
     sd: np.ndarray,
     lr: L2LogisticRegression,
-    gb: BaggedTreeBoostEnsemble,
+    gb: GradientBoostedStumpEnsemble,
 ) -> Dict[Tuple[str, str], float]:
     """
     Build calibrated single-game win probability p_game(A beats B) for all Playoff pairs,
@@ -758,13 +766,85 @@ def simulate_playoffs_monte_carlo(
     return df_sim
 
 
+FEATURE_LABELS = {
+    "pre_elo_diff": "Pre-Match Elo Diff",
+    "kda_diff": "Team KDA Diff",
+    "kills_pg_diff": "Kills / Game Diff",
+    "deaths_pg_diff": "Deaths / Game Diff",
+    "lord_pg_diff": "Lords / Game Diff",
+    "turtle_pg_diff": "Turtles / Game Diff",
+    "tower_pg_diff": "Towers / Game Diff",
+    "gold_pg_diff": "Gold / Game Diff",
+}
+
+
+def plot_forecast(
+    df_sim: pd.DataFrame, feature_cols: List[str], lr: L2LogisticRegression, out_path: Path
+) -> None:
+    """Two-panel chart: playoff forecast (left) and full-fit logistic weights (right)."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    bg, panel, grid, text = "#0f172a", "#1e293b", "#334155", "#cbd5e1"
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 8), facecolor=bg)
+    for ax in (ax1, ax2):
+        ax.set_facecolor(panel)
+        ax.tick_params(colors=text, labelsize=13)
+        for spine in ax.spines.values():
+            spine.set_color(grid)
+        ax.grid(axis="x", color=grid, linestyle="--", alpha=0.8)
+        ax.set_axisbelow(True)
+
+    teams = df_sim["Team"].tolist()
+    y = np.arange(len(teams))
+    gf = df_sim["M8_Qual_GrandFinal_%"].to_numpy()
+    champ = df_sim["Champion_%"].to_numpy()
+    ax1.barh(y - 0.18, gf, height=0.35, color="#38bdf8", label="Reach Grand Final / M8 Slot (%)")
+    ax1.barh(y + 0.18, champ, height=0.35, color="#f59e0b", label="Win S18 Final / Champion (%)")
+    for yi, (g, c) in enumerate(zip(gf, champ)):
+        ax1.text(g + 1.2, yi - 0.18, f"{g:.1f}%", va="center", color="#38bdf8", fontsize=12, fontweight="bold")
+        ax1.text(c + 1.2, yi + 0.18, f"{c:.1f}%", va="center", color="#f59e0b", fontsize=12, fontweight="bold")
+    ax1.set_yticks(y, teams, fontsize=15, fontweight="bold")
+    ax1.invert_yaxis()
+    ax1.set_xlim(0, 102)
+    ax1.set_xlabel("Probability (%)", color=text, fontsize=13)
+    ax1.set_title("MPL MY S18 Playoffs Forecast (50,000 Simulations)", color="white", fontsize=16, fontweight="bold", pad=14)
+    ax1.legend(loc="lower right", facecolor=bg, edgecolor=grid, labelcolor="white", fontsize=12)
+
+    weights = sorted(zip(feature_cols, lr.coef_), key=lambda x: abs(x[1]), reverse=True)
+    labels = [FEATURE_LABELS.get(f, f) for f, _ in weights]
+    vals = np.array([w for _, w in weights])
+    yw = np.arange(len(vals))
+    ax2.barh(yw, vals, height=0.55, color=np.where(vals >= 0, "#10b981", "#f43f5e"))
+    lim = max(1.4, float(np.abs(vals).max()) * 1.3)
+    for yi, v in enumerate(vals):
+        ax2.text(v + (0.05 if v >= 0 else -0.05) * lim / 1.4, yi, f"{v:+.2f}", va="center",
+                 ha="left" if v >= 0 else "right", color="white", fontsize=12, fontweight="bold")
+    ax2.axvline(0, color="#94a3b8", linewidth=1.2)
+    ax2.set_yticks(yw, labels)
+    ax2.invert_yaxis()
+    ax2.set_xlim(-lim, lim)
+    ax2.set_xlabel("Standardized L2 Logistic Weight", color=text, fontsize=13)
+    ax2.set_title("Logistic Regression Weights (Full-Data Fit)", color="white", fontsize=16, fontweight="bold", pad=14)
+
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=117, facecolor=bg)
+    plt.close(fig)
+
+
 def main() -> None:
     df_stats = build_feature_table()
     df_train, feature_cols = build_training_dataset(df_stats)
 
     # Export clean CSV datasets for GitHub portfolio use
-    df_stats.to_csv("mpl_my_s18_team_stats.csv")
-    df_train[df_train["team_a"] < df_train["team_b"]].to_csv("mpl_my_s18_regular_season_matches.csv", index=False)
+    DATA_DIR.mkdir(exist_ok=True)
+    df_stats.to_csv(DATA_DIR / "mpl_my_s18_team_stats.csv")
+    df_train[df_train["team_a"] < df_train["team_b"]].to_csv(
+        DATA_DIR / "mpl_my_s18_regular_season_matches.csv", index=False
+    )
 
     print("=== MPL Malaysia S18 Regular Season Per-Game Macro, Elo & Bradley-Terry Table ===")
     cols_show = [
@@ -813,6 +893,9 @@ def main() -> None:
     df_sim = simulate_playoffs_monte_carlo(p_game_matrix, n_sims=50_000)
     print("\n=== 50,000-Run Monte Carlo Playoffs Placement & Championship Forecast ===")
     print(df_sim.round(2).to_string(index=False))
+
+    df_sim.round(2).to_csv(DATA_DIR / "mpl_my_s18_playoffs_forecast.csv", index=False)
+    plot_forecast(df_sim, feature_cols, lr, ASSETS_DIR / "mpl_my_s18_championship_forecast.png")
 
 
 if __name__ == "__main__":
