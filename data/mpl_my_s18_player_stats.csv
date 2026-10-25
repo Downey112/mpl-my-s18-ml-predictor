@@ -1,0 +1,31 @@
+team,player,role,games,kills,avg_kills,deaths,avg_deaths,assists,avg_assists,avg_kda,kill_participation_pct
+SRG,Sekysss,Jungler,32,151,4.72,66,2.06,178,5.56,4.98,74
+SRG,Innocent,Gold Laner,32,114,3.56,38,1.19,154,4.81,7.05,60
+SRG,Stormie,Mid Laner,32,89,2.78,46,1.44,255,7.97,7.48,77
+SRG,kramM,EXP Laner,32,56,1.75,64,2.0,243,7.59,4.67,67
+SRG,YumS,Roamer,32,37,1.16,82,2.56,296,9.25,4.06,74
+VMS,ERROR 404,Jungler,33,156,4.73,66,2.0,155,4.7,4.71,75
+VMS,CLAWKUN,Mid Laner,36,69,1.92,32,0.89,283,7.86,11.0,79
+VMS,Natco,Gold Laner,36,127,3.53,61,1.69,174,4.83,4.93,67
+VMS,Sizkaa,EXP Laner,36,54,1.5,95,2.64,205,5.69,2.73,58
+VMS,ZQEEF,Roamer,36,24,0.67,90,2.5,301,8.36,3.61,73
+TR,Dolynn,Jungler,33,145,4.39,60,1.82,115,3.48,4.33,72
+TR,Cliveee,Gold Laner,33,99,3.0,27,0.82,139,4.21,8.81,66
+TR,Kyym,Mid Laner,33,56,1.7,62,1.88,214,6.48,4.35,74
+TR,SEPAT,EXP Laner,24,31,1.29,71,2.96,141,5.88,2.42,60
+TR,NovaXcobar,Roamer,33,26,0.79,82,2.48,244,7.39,3.29,74
+iG,Lunnn,Jungler,34,111,3.26,71,2.09,176,5.18,4.04,80
+iG,Rokji,Gold Laner,34,86,2.53,49,1.44,142,4.18,4.65,64
+iG,Treacky,Mid Laner,34,77,2.26,74,2.18,217,6.38,3.97,82
+iG,YE3,EXP Laner,34,65,1.91,85,2.5,125,3.68,2.24,53
+iG,ATANNN,Roamer,28,16,0.57,81,2.89,207,7.39,2.75,76
+BTRM,Chibii,Jungler,36,153,4.25,108,3.0,137,3.81,2.69,72
+BTRM,CikuGais,Gold Laner,28,93,3.32,65,2.32,123,4.39,3.32,69
+BTRM,Zieyy,Mid Laner,36,67,1.86,77,2.14,232,6.44,3.88,75
+BTRM,Jeymz,EXP Laner,36,40,1.11,95,2.64,206,5.72,2.59,61
+BTRM,GRboy,Roamer,36,29,0.81,115,3.19,286,7.94,2.74,79
+FL,Garyy,Jungler,32,125,3.91,81,2.53,146,4.56,3.35,72
+FL,UK1R,Mid Laner,32,80,2.5,47,1.47,218,6.81,6.34,79
+FL,Vanix,Gold Laner,32,95,2.97,51,1.59,143,4.47,4.67,63
+FL,3Mar,EXP Laner,32,47,1.47,86,2.69,180,5.62,2.64,61
+FL,XORN,Roamer,32,28,0.88,78,2.44,263,8.22,3.73,78
