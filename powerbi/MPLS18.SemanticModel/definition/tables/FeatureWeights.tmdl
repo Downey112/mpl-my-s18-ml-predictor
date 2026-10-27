@@ -1,12 +1,12 @@
 table FeatureWeights
 	lineageTag: 7ff047fa-9c4d-5ddb-9406-6796d90a348b
 
-	measure 'Weight' = SUM ( FeatureWeights[weight] )
+	measure 'Feature Weight' = SUM ( FeatureWeights[weight] )
 		formatString: +0.00;-0.00;0.00
-		lineageTag: 66577c37-fc79-54e4-887f-c4fd390c41a8
+		lineageTag: d7874d69-788f-5441-946f-3943fc0fba7d
 
-	measure 'Weight Color' = IF ( [Weight] >= 0, "#16A34A", "#DC2626" )
-		lineageTag: 98def92f-31b4-5fb7-98ed-785d11fbd35d
+	measure 'Feature Weight Color' = IF ( [Feature Weight] >= 0, "#16A34A", "#DC2626" )
+		lineageTag: d1f67dff-b084-572a-ace3-9985c3758eb6
 
 	column feature
 		dataType: string
