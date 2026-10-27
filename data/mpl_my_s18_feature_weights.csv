@@ -1,0 +1,9 @@
+feature,label,weight
+pre_elo_diff,Pre-Match Elo Diff,-1.0592
+kda_diff,Team KDA Diff,-0.025
+kills_pg_diff,Kills / Game Diff,0.2294
+deaths_pg_diff,Deaths / Game Diff,-0.2961
+lord_pg_diff,Lords / Game Diff,0.5238
+turtle_pg_diff,Turtles / Game Diff,0.099
+tower_pg_diff,Towers / Game Diff,1.0672
+gold_pg_diff,Gold / Game Diff,-0.2881

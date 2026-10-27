@@ -1,0 +1,183 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.3.0/schema.json",
+  "name": "standings",
+  "position": {
+    "x": 640,
+    "y": 456,
+    "z": 4100,
+    "height": 240,
+    "width": 616,
+    "tabOrder": 4100
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Teams"
+                    }
+                  },
+                  "Property": "seed"
+                }
+              },
+              "queryRef": "Teams.seed",
+              "nativeQueryRef": "seed",
+              "displayName": "Seed"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Teams"
+                    }
+                  },
+                  "Property": "full_name"
+                }
+              },
+              "queryRef": "Teams.full_name",
+              "nativeQueryRef": "full_name",
+              "displayName": "Team"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Teams"
+                    }
+                  },
+                  "Property": "Record"
+                }
+              },
+              "queryRef": "Teams.Record",
+              "nativeQueryRef": "Record",
+              "displayName": "Matches"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Teams"
+                    }
+                  },
+                  "Property": "Games"
+                }
+              },
+              "queryRef": "Teams.Games",
+              "nativeQueryRef": "Games",
+              "displayName": "Games"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Teams"
+                    }
+                  },
+                  "Property": "Game Diff"
+                }
+              },
+              "queryRef": "Teams.Game Diff",
+              "nativeQueryRef": "Game Diff",
+              "displayName": "Diff"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Teams"
+                    }
+                  },
+                  "Property": "final_elo"
+                }
+              },
+              "queryRef": "Teams.final_elo",
+              "nativeQueryRef": "final_elo",
+              "displayName": "Elo"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Teams"
+                    }
+                  },
+                  "Property": "bt_strength"
+                }
+              },
+              "queryRef": "Teams.bt_strength",
+              "nativeQueryRef": "bt_strength",
+              "displayName": "Bradley-Terry"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Teams"
+                  }
+                },
+                "Property": "seed"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Regular season standings (top 6 made the playoffs)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

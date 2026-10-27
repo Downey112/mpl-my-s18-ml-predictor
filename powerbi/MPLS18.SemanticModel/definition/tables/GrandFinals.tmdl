@@ -1,0 +1,49 @@
+table GrandFinals
+	lineageTag: 0d3f4c3f-85d9-5a78-b82a-ce5b5680c9ff
+
+	measure 'Card Top Grand Final' =
+			VAR _top = TOPN ( 1, ALL ( GrandFinals ), GrandFinals[share], DESC )
+			RETURN
+			    MAXX ( _top, GrandFinals[Matchup] ) & "  " & FORMAT ( MAXX ( _top, GrandFinals[share] ), "0.0%" )
+		displayFolder: Cards
+		lineageTag: 25fc9183-fcf6-5a7c-9532-909cb81e8790
+
+	column rank
+		dataType: int64
+		formatString: 0
+		lineageTag: 62807552-e3a5-51b2-a858-e62077f1639e
+		summarizeBy: none
+		sourceColumn: rank
+
+	column Matchup
+		dataType: string
+		lineageTag: 3c3bce3f-c9ca-5b11-a85d-514eaa5cca3f
+		summarizeBy: none
+		sourceColumn: Matchup
+
+	column share
+		dataType: double
+		formatString: 0.0%
+		lineageTag: fbac356d-b72f-5f98-90e8-b1dadffc887e
+		summarizeBy: none
+		sourceColumn: share
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition GrandFinals = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(
+				        File.Contents(DataFolder & "\mpl_my_s18_grand_final_matchups.csv"),
+				        [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]
+				    ),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Headers, {{"rank", Int64.Type}, {"team_1", type text}, {"team_2", type text}, {"share_of_sims_pct", type number}}, "en-US"),
+				    AddMatchup = Table.AddColumn(Typed, "Matchup", each [team_1] & " vs " & [team_2], type text),
+				    AddShare = Table.AddColumn(AddMatchup, "share", each [share_of_sims_pct] / 100, type number),
+				    Result = Table.SelectColumns(AddShare, {"rank", "Matchup", "share"})
+				in
+				    Result
+
+	annotation PBI_ResultType = Table
+

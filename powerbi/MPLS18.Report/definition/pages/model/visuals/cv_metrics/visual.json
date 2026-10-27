@@ -1,0 +1,153 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.3.0/schema.json",
+  "name": "cv_metrics",
+  "position": {
+    "x": 640,
+    "y": 80,
+    "z": 2100,
+    "height": 192,
+    "width": 616,
+    "tabOrder": 2100
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CVMetrics"
+                    }
+                  },
+                  "Property": "model"
+                }
+              },
+              "queryRef": "CVMetrics.model",
+              "nativeQueryRef": "model",
+              "displayName": "Model"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CVMetrics"
+                    }
+                  },
+                  "Property": "accuracy"
+                }
+              },
+              "queryRef": "CVMetrics.accuracy",
+              "nativeQueryRef": "accuracy",
+              "displayName": "Accuracy"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CVMetrics"
+                    }
+                  },
+                  "Property": "roc_auc"
+                }
+              },
+              "queryRef": "CVMetrics.roc_auc",
+              "nativeQueryRef": "roc_auc",
+              "displayName": "ROC-AUC"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CVMetrics"
+                    }
+                  },
+                  "Property": "brier"
+                }
+              },
+              "queryRef": "CVMetrics.brier",
+              "nativeQueryRef": "brier",
+              "displayName": "Brier"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "CVMetrics"
+                    }
+                  },
+                  "Property": "log_loss"
+                }
+              },
+              "queryRef": "CVMetrics.log_loss",
+              "nativeQueryRef": "log_loss",
+              "displayName": "Log loss"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "CVMetrics"
+                  }
+                },
+                "Property": "roc_auc"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Cross-validation (56 matches, 112 directed rows)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

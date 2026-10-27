@@ -1,0 +1,5 @@
+model,accuracy,roc_auc,brier,log_loss
+L2 Logistic Regression,0.75,0.773,0.193,0.577
+Boosted Decision Ensemble,0.696,0.678,0.213,0.617
+Blended ML Ensemble,0.777,0.776,0.194,0.574
+Pre-Match Elo (reference),0.661,0.675,0.239,0.672

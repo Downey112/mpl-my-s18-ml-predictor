@@ -1,0 +1,152 @@
+table Forecast
+	lineageTag: fb5fbb8b-78ba-5fd4-8290-16c85a5d270b
+
+	measure 'Champion %' = DIVIDE ( SUM ( Forecast[Champion] ), 100 )
+		formatString: 0.0%
+		displayFolder: Base
+		lineageTag: 0a28534e-9da4-5593-a1d2-fc9144f26c46
+
+	measure 'Grand Final %' = DIVIDE ( SUM ( Forecast[Grand Final] ), 100 )
+		formatString: 0.0%
+		displayFolder: Base
+		lineageTag: 0f0c96c7-ab26-5d52-a193-6deea8ddcbd1
+
+	measure 'Card Favourite' =
+			VAR _top =
+			    CALCULATETABLE (
+			        TOPN ( 1, ALL ( Forecast ), Forecast[Champion], DESC, Forecast[Team], ASC ),
+			        REMOVEFILTERS ( Teams )
+			    )
+			VAR _team = MAXX ( _top, Forecast[Team] )
+			VAR _p = MAXX ( _top, Forecast[Champion] ) / 100
+			RETURN
+			    _team & "  " & FORMAT ( _p, "0.0%" )
+		displayFolder: Cards
+		lineageTag: 7b7923eb-0f5f-5017-bfeb-411a07d6e570
+
+	measure 'Card Second M8 Slot' =
+			-- Teams ranked 2 and 3 by Grand Final odds; SRG is a near-lock for the first M8 slot
+			VAR _top2 =
+			    CALCULATETABLE (
+			        TOPN ( 2, ALL ( Forecast ), Forecast[Grand Final], DESC, Forecast[Team], ASC ),
+			        REMOVEFILTERS ( Teams )
+			    )
+			VAR _top3 =
+			    CALCULATETABLE (
+			        TOPN ( 3, ALL ( Forecast ), Forecast[Grand Final], DESC, Forecast[Team], ASC ),
+			        REMOVEFILTERS ( Teams )
+			    )
+			VAR _row2 = TOPN ( 1, _top2, Forecast[Grand Final], ASC, Forecast[Team], DESC )
+			VAR _row3 = TOPN ( 1, _top3, Forecast[Grand Final], ASC, Forecast[Team], DESC )
+			VAR _second = MAXX ( _row2, Forecast[Team] )
+			VAR _secondVal = MAXX ( _row2, Forecast[Grand Final] )
+			VAR _third = MAXX ( _row3, Forecast[Team] )
+			VAR _thirdVal = MAXX ( _row3, Forecast[Grand Final] )
+			RETURN
+			    _second & " " & FORMAT ( _secondVal / 100, "0%" ) & "  vs  " & _third & " " & FORMAT ( _thirdVal / 100, "0%" )
+		displayFolder: Cards
+		lineageTag: ee1bec6f-9621-5326-b80e-1b6732cb4658
+
+	column Team
+		dataType: string
+		lineageTag: 5685b06e-7c85-509d-b600-83b59c24e0f7
+		summarizeBy: none
+		sourceColumn: Team
+
+	column 'Reach UB Semifinal'
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: 8149a2d2-70e3-5740-9b85-c64d0d3d452f
+		summarizeBy: none
+		sourceColumn: Reach UB Semifinal
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Reach UB Final'
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: 75943a42-c38b-5643-ba31-443836db4f29
+		summarizeBy: none
+		sourceColumn: Reach UB Final
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Reach LB Final'
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: d394d409-48d8-5bdc-88f9-0b041f6f47db
+		summarizeBy: none
+		sourceColumn: Reach LB Final
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Grand Final'
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: 401e6e00-0776-57b9-863e-a7694f1a4e93
+		summarizeBy: none
+		sourceColumn: Grand Final
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Champion
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: 733fd91a-da5f-5588-a3fc-09981e972fec
+		summarizeBy: none
+		sourceColumn: Champion
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Runner-up'
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: 8a49b011-69c0-59e0-ac20-92990083e4a7
+		summarizeBy: none
+		sourceColumn: Runner-up
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Third
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: 279d3e60-9416-5e3c-853a-17b3d1b75ace
+		summarizeBy: none
+		sourceColumn: Third
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Fourth
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: ad6ad933-836f-5404-8640-4f61bbccc225
+		summarizeBy: none
+		sourceColumn: Fourth
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Fifth-Sixth'
+		dataType: double
+		formatString: 0.00
+		isHidden
+		lineageTag: bd6a9c92-217f-5746-b7fa-e73139ccc791
+		summarizeBy: none
+		sourceColumn: Fifth-Sixth
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Forecast = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(
+				        File.Contents(DataFolder & "\mpl_my_s18_playoffs_forecast.csv"),
+				        [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]
+				    ),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Headers, {{"Team", type text}, {"Reach_UBSF_%", type number}, {"Reach_UBF_%", type number}, {"Reach_LBF_%", type number}, {"M8_Qual_GrandFinal_%", type number}, {"Champion_%", type number}, {"RunnerUp_2nd_%", type number}, {"3rd_Place_%", type number}, {"4th_Place_%", type number}, {"5th_6th_Place_%", type number}}, "en-US"),
+				    Renamed = Table.RenameColumns(Typed, {{"Reach_UBSF_%", "Reach UB Semifinal"}, {"Reach_UBF_%", "Reach UB Final"}, {"Reach_LBF_%", "Reach LB Final"}, {"M8_Qual_GrandFinal_%", "Grand Final"}, {"Champion_%", "Champion"}, {"RunnerUp_2nd_%", "Runner-up"}, {"3rd_Place_%", "Third"}, {"4th_Place_%", "Fourth"}, {"5th_6th_Place_%", "Fifth-Sixth"}})
+				in
+				    Renamed
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,87 @@
+table Teams
+	lineageTag: 05170039-80ad-5c95-b52c-d57094a5051a
+
+	measure 'Title Chance Seeds 4-6' = CALCULATE ( [Champion %], REMOVEFILTERS ( Teams ), Teams[seed] IN { 4, 5, 6 } )
+		formatString: 0.0%
+		displayFolder: Cards
+		lineageTag: a1b69b91-51a0-5859-8a6c-f3bb15f2a0fc
+
+	column team
+		dataType: string
+		isKey
+		sortByColumn: seed
+		lineageTag: 032cc7d8-24f2-5412-ba13-bafe3d70b372
+		summarizeBy: none
+		sourceColumn: team
+
+	column full_name
+		dataType: string
+		lineageTag: fe16571e-23fc-5aed-9620-c482a18eaad7
+		summarizeBy: none
+		sourceColumn: full_name
+
+	column seed
+		dataType: int64
+		formatString: 0
+		lineageTag: 1c4e9be5-e1d2-5b75-a2a3-a37e59c883cb
+		summarizeBy: none
+		sourceColumn: seed
+
+	column Record
+		dataType: string
+		lineageTag: db955300-8282-5740-a779-d7e3a84539bc
+		summarizeBy: none
+		sourceColumn: Record
+
+	column Games
+		dataType: string
+		lineageTag: f055a813-0454-5e32-a456-7fa1dd8091cc
+		summarizeBy: none
+		sourceColumn: Games
+
+	column 'Game Diff'
+		dataType: int64
+		formatString: +0;-0;0
+		lineageTag: ee5780da-6758-5db3-9a75-604a02d8e7b7
+		summarizeBy: none
+		sourceColumn: Game Diff
+
+	column final_elo
+		dataType: double
+		formatString: 0
+		lineageTag: b9e3c54b-afd2-5530-9e0b-e5093f872b51
+		summarizeBy: none
+		sourceColumn: final_elo
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column bt_strength
+		dataType: double
+		formatString: 0.00
+		lineageTag: e40e1a06-0dbf-5a66-bd63-16cd12ae067b
+		summarizeBy: none
+		sourceColumn: bt_strength
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Teams = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(
+				        File.Contents(DataFolder & "\mpl_my_s18_team_stats.csv"),
+				        [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]
+				    ),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Headers, {
+				        {"team", type text}, {"full_name", type text}, {"seed", Int64.Type},
+				        {"match_w", Int64.Type}, {"match_l", Int64.Type}, {"game_w", Int64.Type}, {"game_l", Int64.Type},
+				        {"final_elo", type number}, {"bt_strength", type number}
+				    }, "en-US"),
+				    AddRecord = Table.AddColumn(Typed, "Record", each Text.From([match_w]) & "-" & Text.From([match_l]), type text),
+				    AddGames = Table.AddColumn(AddRecord, "Games", each Text.From([game_w]) & "-" & Text.From([game_l]), type text),
+				    AddDiff = Table.AddColumn(AddGames, "Game Diff", each [game_w] - [game_l], Int64.Type),
+				    Result = Table.SelectColumns(AddDiff, {"team", "full_name", "seed", "Record", "Games", "Game Diff", "final_elo", "bt_strength"})
+				in
+				    Result
+
+	annotation PBI_ResultType = Table
+

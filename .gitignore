@@ -3,3 +3,6 @@ __pycache__/
 .venv/
 .claude/
 .ipynb_checkpoints/
+# Power BI local files
+**/.pbi/localSettings.json
+**/.pbi/cache.abf

@@ -1,0 +1,21 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["DataFolder", "Teams", "Forecast", "Placement", "SeriesOdds", "GrandFinals", "FeatureWeights", "CVMetrics"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Teams
+ref table Forecast
+ref table Placement
+ref table SeriesOdds
+ref table GrandFinals
+ref table FeatureWeights
+ref table CVMetrics

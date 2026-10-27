@@ -1,0 +1,8 @@
+relationship c4d31a86-4000-5461-8818-9d7d44642f06
+	fromColumn: Forecast.Team
+	toColumn: Teams.team
+
+relationship 43c9857a-6025-5256-ae69-5c5913de4dfa
+	fromColumn: Placement.Team
+	toColumn: Teams.team
+

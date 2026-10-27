@@ -533,8 +533,11 @@ def compute_roc_auc(y_true: np.ndarray, y_prob: np.ndarray) -> float:
 
 def train_and_evaluate_models(
     df_train: pd.DataFrame, feature_cols: List[str]
-) -> Tuple[np.ndarray, np.ndarray, L2LogisticRegression, GradientBoostedStumpEnsemble]:
-    """Evaluate via 8-Fold Leave-One-Week-Out Cross-Validation and fit final models."""
+) -> Tuple[np.ndarray, np.ndarray, L2LogisticRegression, GradientBoostedStumpEnsemble, pd.DataFrame]:
+    """Evaluate via 8-Fold Leave-One-Week-Out Cross-Validation and fit final models.
+
+    Also scores a leak-free reference: the pre-match Elo expectation, which needs no training.
+    """
     X = df_train[feature_cols].values
     y = df_train["target_win"].values
     weeks = df_train["week"].values
@@ -556,12 +559,15 @@ def train_and_evaluate_models(
         p_gb_oof[val_mask] = gb_fold.predict_proba(X_va)[:, 1]
 
     p_ens_oof = 0.65 * p_lr_oof + 0.35 * p_gb_oof
+    p_elo_ref = 1.0 / (1.0 + 10.0 ** (-df_train["pre_elo_diff"].values / 400.0))
 
     print("=== Leave-One-Week-Out Cross-Validation (56 Matches / 112 Directed Pairs) ===")
+    cv_rows = []
     for name, preds in [
         ("L2 Logistic Regression   ", p_lr_oof),
         ("Boosted Decision Ensemble", p_gb_oof),
         ("Blended ML Ensemble      ", p_ens_oof),
+        ("Pre-Match Elo (reference)", p_elo_ref),
     ]:
         acc = float(np.mean((preds >= 0.5).astype(int) == y))
         auc = compute_roc_auc(y, preds)
@@ -569,6 +575,9 @@ def train_and_evaluate_models(
         eps = np.clip(preds, 1e-6, 1.0 - 1e-6)
         ll = float(-np.mean(y * np.log(eps) + (1.0 - y) * np.log(1.0 - eps)))
         print(f"  {name}: Accuracy = {acc:.3f} | ROC-AUC = {auc:.3f} | Brier = {brier:.3f} | LogLoss = {ll:.3f}")
+        cv_rows.append(
+            {"model": name.strip(), "accuracy": acc, "roc_auc": auc, "brier": brier, "log_loss": ll}
+        )
 
     mu_full = np.mean(X, axis=0)
     sd_full = np.std(X, axis=0) + 1e-8
@@ -581,7 +590,7 @@ def train_and_evaluate_models(
     for fname, weight in sorted(zip(feature_cols, lr_full.coef_), key=lambda x: abs(x[1]), reverse=True):
         print(f"  {fname:16s}: {weight:+.4f}")
 
-    return mu_full, sd_full, lr_full, gb_full
+    return mu_full, sd_full, lr_full, gb_full, pd.DataFrame(cv_rows)
 
 
 def build_pairwise_game_prob_matrix(
@@ -754,16 +763,29 @@ def simulate_playoffs_monte_carlo(
     df_sim = pd.DataFrame(rows).sort_values("Champion_%", ascending=False)
 
     print("\n=== Top Grand Final Matchup Probabilities (50,000 Simulations) ===")
-    for (t1, t2), cnt in sorted(gf_matchups.items(), key=lambda x: x[1], reverse=True)[:6]:
+    gf_rows = []
+    for rank, ((t1, t2), cnt) in enumerate(sorted(gf_matchups.items(), key=lambda x: x[1], reverse=True), 1):
         p_t1_bo7, scores_bo7 = series_win_prob(p_game_matrix[(t1, t2)], 7)
         most_likely_score = max(scores_bo7.items(), key=lambda x: x[1])
-        print(
-            f"  {t1:4s} vs {t2:4s}: {100.0 * cnt / n_sims:5.2f}% of simulations | "
-            f"Bo7 Win Prob: {t1} {100*p_t1_bo7:.1f}% - {100*(1-p_t1_bo7):.1f}% {t2} "
-            f"(Top scoreline: {most_likely_score[0]} at {100*most_likely_score[1]:.1f}%)"
+        gf_rows.append(
+            {
+                "rank": rank,
+                "team_1": t1,
+                "team_2": t2,
+                "share_of_sims_pct": 100.0 * cnt / n_sims,
+                "team_1_bo7_win_pct": 100.0 * p_t1_bo7,
+                "top_scoreline": most_likely_score[0],
+                "top_scoreline_pct": 100.0 * most_likely_score[1],
+            }
         )
+        if rank <= 6:
+            print(
+                f"  {t1:4s} vs {t2:4s}: {100.0 * cnt / n_sims:5.2f}% of simulations | "
+                f"Bo7 Win Prob: {t1} {100*p_t1_bo7:.1f}% - {100*(1-p_t1_bo7):.1f}% {t2} "
+                f"(Top scoreline: {most_likely_score[0]} at {100*most_likely_score[1]:.1f}%)"
+            )
 
-    return df_sim
+    return df_sim, pd.DataFrame(gf_rows)
 
 
 FEATURE_LABELS = {
@@ -863,7 +885,7 @@ def main() -> None:
     print(df_stats[cols_show].round(2).to_string())
     print()
 
-    mu, sd, lr, gb = train_and_evaluate_models(df_train, feature_cols)
+    mu, sd, lr, gb, df_cv = train_and_evaluate_models(df_train, feature_cols)
     p_game_matrix = build_pairwise_game_prob_matrix(df_stats, mu, sd, lr, gb)
 
     print("\n=== Key Playoffs Series Win Probabilities & Most Likely Scorelines ===")
@@ -880,7 +902,8 @@ def main() -> None:
         ("Potential Grand Final (Nov 1, Bo7)", "SRG", "TR", 7),
         ("Potential Grand Final (Nov 1, Bo7)", "TR", "VMS", 7),
     ]
-    for stage, ta, tb, bo in key_matchups:
+    series_rows = []
+    for order, (stage, ta, tb, bo) in enumerate(key_matchups, 1):
         p_g = p_game_matrix[(ta, tb)]
         p_s, s_dist = series_win_prob(p_g, bo)
         best_sc = max(s_dist.items(), key=lambda x: x[1])
@@ -889,12 +912,39 @@ def main() -> None:
             f"  {stage:34s} | {ta:4s} vs {tb:4s} | RS H2H: {m_a}-{m_b} ({g_a}-{g_b} games) | "
             f"p(Game)={100*p_g:5.1f}% | p(Bo{bo})={100*p_s:5.1f}% {ta} | Top Score: {best_sc[0]} ({100*best_sc[1]:.1f}%)"
         )
+        series_rows.append(
+            {
+                "order": order,
+                "stage": stage,
+                "team_a": ta,
+                "team_b": tb,
+                "best_of": bo,
+                "rs_h2h_matches": f"{m_a}-{m_b}",
+                "rs_h2h_games": f"{g_a}-{g_b}",
+                "team_a_game_win_pct": 100.0 * p_g,
+                "team_a_series_win_pct": 100.0 * p_s,
+                "top_scoreline": best_sc[0],
+                "top_scoreline_pct": 100.0 * best_sc[1],
+            }
+        )
 
-    df_sim = simulate_playoffs_monte_carlo(p_game_matrix, n_sims=50_000)
+    df_sim, df_gf = simulate_playoffs_monte_carlo(p_game_matrix, n_sims=50_000)
     print("\n=== 50,000-Run Monte Carlo Playoffs Placement & Championship Forecast ===")
     print(df_sim.round(2).to_string(index=False))
 
+    # Extra tables for the Power BI report in powerbi/
+    df_weights = pd.DataFrame(
+        {
+            "feature": feature_cols,
+            "label": [FEATURE_LABELS.get(f, f) for f in feature_cols],
+            "weight": lr.coef_,
+        }
+    )
     df_sim.round(2).to_csv(DATA_DIR / "mpl_my_s18_playoffs_forecast.csv", index=False)
+    pd.DataFrame(series_rows).round(2).to_csv(DATA_DIR / "mpl_my_s18_series_odds.csv", index=False)
+    df_gf.round(2).to_csv(DATA_DIR / "mpl_my_s18_grand_final_matchups.csv", index=False)
+    df_weights.round(4).to_csv(DATA_DIR / "mpl_my_s18_feature_weights.csv", index=False)
+    df_cv.round(3).to_csv(DATA_DIR / "mpl_my_s18_cv_metrics.csv", index=False)
     plot_forecast(df_sim, feature_cols, lr, ASSETS_DIR / "mpl_my_s18_championship_forecast.png")
 
 
