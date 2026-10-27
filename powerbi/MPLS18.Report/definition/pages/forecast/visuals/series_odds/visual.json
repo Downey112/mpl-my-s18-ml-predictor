@@ -88,7 +88,7 @@
               },
               "queryRef": "SeriesOdds.team_a_game_win",
               "nativeQueryRef": "team_a_game_win",
-              "displayName": "1st team wins game"
+              "displayName": "Game win"
             },
             {
               "field": {
@@ -103,7 +103,7 @@
               },
               "queryRef": "SeriesOdds.team_a_series_win",
               "nativeQueryRef": "team_a_series_win",
-              "displayName": "1st team wins series"
+              "displayName": "Series win"
             },
             {
               "field": {
@@ -118,7 +118,7 @@
               },
               "queryRef": "SeriesOdds.Top Score",
               "nativeQueryRef": "Top Score",
-              "displayName": "Likeliest score"
+              "displayName": "Top score"
             }
           ]
         }

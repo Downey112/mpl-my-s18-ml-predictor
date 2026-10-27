@@ -43,7 +43,7 @@ table Forecast
 			VAR _third = MAXX ( _row3, Forecast[Team] )
 			VAR _thirdVal = MAXX ( _row3, Forecast[Grand Final] )
 			RETURN
-			    _second & " " & FORMAT ( _secondVal / 100, "0%" ) & "  vs  " & _third & " " & FORMAT ( _thirdVal / 100, "0%" )
+			    _second & " " & FORMAT ( _secondVal / 100, "0%" ) & " vs " & _third & " " & FORMAT ( _thirdVal / 100, "0%" )
 		displayFolder: Cards
 		lineageTag: ee1bec6f-9621-5326-b80e-1b6732cb4658
 

@@ -43,6 +43,10 @@ Takes a few seconds. It prints the tables and rewrites the CSVs in `data/` and t
 - **Playoffs Forecast**: four KPI cards (title favourite, race for the second M8 slot, most likely Grand Final, title chance for seeds 4–6), title and Grand Final odds by team, each team's finishing distribution, key series odds, and the regular-season standings.
 - **Model Check**: logistic regression weights, cross-validation scores next to the Elo baseline, and the limitations.
 
+![Power BI page: Playoffs Forecast](docs/mpl-s18-forecast.webp)
+
+![Power BI page: Model Check](docs/mpl-s18-model-check.webp)
+
 To open it:
 
 1. Run `python mpl_my_s18_predictor.py` once so all CSVs exist.
