@@ -38,7 +38,7 @@ Takes a few seconds. It prints the tables and rewrites the CSVs in `data/` and t
 
 ## Power BI report
 
-`powerbi/MPLS18.pbip` is a Power BI project (PBIP, report in PBIR format) built on the CSVs in `data/`. It has two pages:
+`powerbi/MPLS18.pbip` is a Power BI project (PBIP, report in PBIR format) built on the CSVs in `data/`, styled with a dark navy and gold esports theme. It is generated from code by `scripts/build_pbip.py` (TMDL semantic model + PBIR pages), so change that script rather than the generated files. It has two pages:
 
 - **Playoffs Forecast**: four KPI cards (title favourite, race for the second M8 slot, most likely Grand Final, title chance for seeds 4–6), title and Grand Final odds by team, each team's finishing distribution, key series odds, and the regular-season standings.
 - **Model Check**: logistic regression weights, cross-validation scores next to the Elo baseline, and the limitations.

@@ -19,17 +19,17 @@
   "textClasses": {
     "callout": {
       "fontSize": 22,
-      "fontFace": "Segoe UI Bold",
+      "fontFace": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
       "color": "#F1F5F9"
     },
     "title": {
       "fontSize": 11,
-      "fontFace": "Segoe UI Bold",
+      "fontFace": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
       "color": "#F2C14E"
     },
     "header": {
       "fontSize": 10,
-      "fontFace": "Segoe UI Semibold",
+      "fontFace": "'Segoe UI Semibold', wf_segoe-ui_semibold, helvetica, arial, sans-serif",
       "color": "#F2C14E"
     },
     "label": {
@@ -110,7 +110,7 @@
               }
             },
             "fontSize": 11,
-            "fontFamily": "Segoe UI Bold",
+            "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
             "alignment": "left"
           }
         ]
@@ -135,7 +135,7 @@
               }
             },
             "fontSize": 22,
-            "fontFamily": "Segoe UI Bold"
+            "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif"
           }
         ],
         "categoryLabels": [
@@ -273,7 +273,7 @@
                 "color": "#111D35"
               }
             },
-            "fontFamily": "Segoe UI Bold",
+            "fontFamily": "'Segoe UI Bold', wf_segoe-ui_bold, helvetica, arial, sans-serif",
             "fontSize": 9
           }
         ],
