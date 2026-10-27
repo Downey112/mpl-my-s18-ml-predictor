@@ -43,11 +43,11 @@
                       "Entity": "FeatureWeights"
                     }
                   },
-                  "Property": "Weight"
+                  "Property": "Feature Weight"
                 }
               },
-              "queryRef": "FeatureWeights.Weight",
-              "nativeQueryRef": "Weight",
+              "queryRef": "FeatureWeights.Feature Weight",
+              "nativeQueryRef": "Feature Weight",
               "displayName": "Standardised weight"
             }
           ]
@@ -63,7 +63,7 @@
                     "Entity": "FeatureWeights"
                   }
                 },
-                "Property": "Weight"
+                "Property": "Feature Weight"
               }
             },
             "direction": "Descending"
@@ -85,7 +85,7 @@
                           "Entity": "FeatureWeights"
                         }
                       },
-                      "Property": "Weight Color"
+                      "Property": "Feature Weight Color"
                     }
                   }
                 }
