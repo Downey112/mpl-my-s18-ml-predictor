@@ -34,7 +34,21 @@ pip install -r requirements.txt
 python mpl_my_s18_predictor.py
 ```
 
-Takes a few seconds. It prints the tables and rewrites `data/mpl_my_s18_team_stats.csv`, `data/mpl_my_s18_regular_season_matches.csv`, `data/mpl_my_s18_playoffs_forecast.csv` and the chart in `assets/`. The simulation is seeded, so results are reproducible.
+Takes a few seconds. It prints the tables and rewrites the CSVs in `data/` and the chart in `assets/`. The simulation is seeded, so results are reproducible.
+
+## Power BI report
+
+`powerbi/MPLS18.pbip` is a Power BI project (PBIP, report in PBIR format) built on the CSVs in `data/`. It has two pages:
+
+- **Playoffs Forecast**: four KPI cards (title favourite, race for the second M8 slot, most likely Grand Final, title chance for seeds 4–6), title and Grand Final odds by team, each team's finishing distribution, key series odds, and the regular-season standings.
+- **Model Check**: logistic regression weights, cross-validation scores next to the Elo baseline, and the limitations.
+
+To open it:
+
+1. Run `python mpl_my_s18_predictor.py` once so all CSVs exist.
+2. Open `powerbi/MPLS18.pbip` in Power BI Desktop.
+3. If the repo is not at `C:\Users\courts\mpl-my-s18-ml-predictor`, go to **Transform data → Edit parameters** and point `DataFolder` at your `data` folder.
+4. Click **Refresh**.
 
 ## Cross-validation
 
@@ -43,9 +57,9 @@ Takes a few seconds. It prints the tables and rewrites `data/mpl_my_s18_team_sta
 | L2 logistic regression | 0.750 | 0.773 | 0.193 |
 | Boosted stumps | 0.696 | 0.678 | 0.213 |
 | Blend (65/35) | 0.777 | 0.776 | 0.194 |
-| Reference: pre-match Elo only | 0.680* | 0.675 | – |
+| Reference: pre-match Elo only | 0.661 | 0.675 | 0.239 |
 
-\*Accuracy on matches where the Elo gap is non-zero (week-1 matches start level).
+The Elo reference uses only matches played before each game, so it has no leakage and needs no training.
 
 ## Limitations (read before trusting the numbers)
 

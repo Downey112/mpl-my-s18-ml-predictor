@@ -1,0 +1,56 @@
+table CVMetrics
+	lineageTag: b3cf3cd6-cd22-575a-a243-376f5962d116
+
+	column model
+		dataType: string
+		lineageTag: cda10185-1112-5927-848f-7d3de5a848ca
+		summarizeBy: none
+		sourceColumn: model
+
+	column accuracy
+		dataType: double
+		formatString: 0.000
+		lineageTag: 66acdc84-3fe4-561b-bb89-81076b403677
+		summarizeBy: none
+		sourceColumn: accuracy
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column roc_auc
+		dataType: double
+		formatString: 0.000
+		lineageTag: d8331c5e-08c9-592c-b4b7-dce4ba8699cf
+		summarizeBy: none
+		sourceColumn: roc_auc
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column brier
+		dataType: double
+		formatString: 0.000
+		lineageTag: 5b0dfabb-1af3-5c88-b76b-95e8b3970b2f
+		summarizeBy: none
+		sourceColumn: brier
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column log_loss
+		dataType: double
+		formatString: 0.000
+		lineageTag: 33a7ef3a-90ac-5f69-9939-076e4c014d1f
+		summarizeBy: none
+		sourceColumn: log_loss
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition CVMetrics = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(
+				        File.Contents(DataFolder & "\mpl_my_s18_cv_metrics.csv"),
+				        [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]
+				    ),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Result = Table.TransformColumnTypes(Headers, {{"model", type text}, {"accuracy", type number}, {"roc_auc", type number}, {"brier", type number}, {"log_loss", type number}}, "en-US")
+				in
+				    Result
+
+	annotation PBI_ResultType = Table
+

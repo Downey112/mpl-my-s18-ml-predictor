@@ -1,0 +1,47 @@
+table FeatureWeights
+	lineageTag: 7ff047fa-9c4d-5ddb-9406-6796d90a348b
+
+	measure 'Weight' = SUM ( FeatureWeights[weight] )
+		formatString: +0.00;-0.00;0.00
+		lineageTag: 66577c37-fc79-54e4-887f-c4fd390c41a8
+
+	measure 'Weight Color' = IF ( [Weight] >= 0, "#16A34A", "#DC2626" )
+		lineageTag: 98def92f-31b4-5fb7-98ed-785d11fbd35d
+
+	column feature
+		dataType: string
+		isHidden
+		lineageTag: b064b598-0c3c-56e7-9fbf-b07e4244d647
+		summarizeBy: none
+		sourceColumn: feature
+
+	column label
+		dataType: string
+		lineageTag: 48fd91c0-7881-5708-84dc-1b85c5db127c
+		summarizeBy: none
+		sourceColumn: label
+
+	column weight
+		dataType: double
+		formatString: +0.00;-0.00;0.00
+		isHidden
+		lineageTag: 783839a8-b746-5a48-9e3f-a487c0d160b7
+		summarizeBy: none
+		sourceColumn: weight
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition FeatureWeights = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(
+				        File.Contents(DataFolder & "\mpl_my_s18_feature_weights.csv"),
+				        [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]
+				    ),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Result = Table.TransformColumnTypes(Headers, {{"feature", type text}, {"label", type text}, {"weight", type number}}, "en-US")
+				in
+				    Result
+
+	annotation PBI_ResultType = Table
+

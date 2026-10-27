@@ -1,0 +1,116 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.3.0/schema.json",
+  "name": "finish_distribution",
+  "position": {
+    "x": 640,
+    "y": 184,
+    "z": 3100,
+    "height": 256,
+    "width": 616,
+    "tabOrder": 3100
+  },
+  "visual": {
+    "visualType": "hundredPercentStackedBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Teams"
+                    }
+                  },
+                  "Property": "team"
+                }
+              },
+              "queryRef": "Teams.team",
+              "nativeQueryRef": "team",
+              "displayName": "Team",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Placement"
+                    }
+                  },
+                  "Property": "Finish"
+                }
+              },
+              "queryRef": "Placement.Finish",
+              "nativeQueryRef": "Finish"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Placement"
+                    }
+                  },
+                  "Property": "Placement %"
+                }
+              },
+              "queryRef": "Placement.Placement %",
+              "nativeQueryRef": "Placement %",
+              "displayName": "Probability"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Teams"
+                  }
+                },
+                "Property": "team"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Where each team finishes (by seed)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

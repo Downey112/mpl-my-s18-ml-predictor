@@ -1,0 +1,61 @@
+table Placement
+	lineageTag: 3bc46c47-aaaa-5e78-adfb-38f372f8f2e7
+
+	measure 'Placement %' = SUM ( Placement[Probability] )
+		formatString: 0.0%
+		lineageTag: 57784a6a-aebf-55db-af53-4f8ec27d0fa9
+
+	column Team
+		dataType: string
+		lineageTag: a167c556-ff95-508b-9c05-a6899d35d6bf
+		summarizeBy: none
+		sourceColumn: Team
+
+	column Finish
+		dataType: string
+		sortByColumn: FinishOrder
+		lineageTag: e3ec0cb9-4b9b-5434-95e5-1b07e02e2a23
+		summarizeBy: none
+		sourceColumn: Finish
+
+	column FinishOrder
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 39ba6a50-61bf-5884-a8b8-9f935d6a278b
+		summarizeBy: none
+		sourceColumn: FinishOrder
+
+	column Probability
+		dataType: double
+		formatString: 0.0%
+		isHidden
+		lineageTag: 8b44eaaf-f4b0-54db-a95a-df4e50f9e80d
+		summarizeBy: none
+		sourceColumn: Probability
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Placement = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(
+				        File.Contents(DataFolder & "\mpl_my_s18_playoffs_forecast.csv"),
+				        [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]
+				    ),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Kept = Table.SelectColumns(Headers, {"Team", "Champion_%", "RunnerUp_2nd_%", "3rd_Place_%", "4th_Place_%", "5th_6th_Place_%"}),
+				    Typed = Table.TransformColumnTypes(Kept, {{"Team", type text}, {"Champion_%", type number}, {"RunnerUp_2nd_%", type number}, {"3rd_Place_%", type number}, {"4th_Place_%", type number}, {"5th_6th_Place_%", type number}}, "en-US"),
+				    Unpivoted = Table.UnpivotOtherColumns(Typed, {"Team"}, "Key", "Pct"),
+				    Lookup = #table(type table [LookupKey = text, Finish = text, FinishOrder = Int64.Type], {
+				        {"Champion_%", "Champion", 1}, {"RunnerUp_2nd_%", "Runner-up", 2}, {"3rd_Place_%", "3rd", 3},
+				        {"4th_Place_%", "4th", 4}, {"5th_6th_Place_%", "5th-6th", 5}
+				    }),
+				    Joined = Table.Join(Unpivoted, "Key", Lookup, "LookupKey"),
+				    AddProb = Table.AddColumn(Joined, "Probability", each [Pct] / 100, type number),
+				    Result = Table.TransformColumnTypes(Table.SelectColumns(AddProb, {"Team", "Finish", "FinishOrder", "Probability"}), {{"Finish", type text}, {"FinishOrder", Int64.Type}})
+				in
+				    Result
+
+	annotation PBI_ResultType = Table
+

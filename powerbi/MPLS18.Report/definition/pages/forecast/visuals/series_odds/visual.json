@@ -1,0 +1,183 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.3.0/schema.json",
+  "name": "series_odds",
+  "position": {
+    "x": 24,
+    "y": 456,
+    "z": 4000,
+    "height": 240,
+    "width": 600,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SeriesOdds"
+                    }
+                  },
+                  "Property": "order"
+                }
+              },
+              "queryRef": "SeriesOdds.order",
+              "nativeQueryRef": "order",
+              "displayName": "#"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SeriesOdds"
+                    }
+                  },
+                  "Property": "stage"
+                }
+              },
+              "queryRef": "SeriesOdds.stage",
+              "nativeQueryRef": "stage",
+              "displayName": "Stage"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SeriesOdds"
+                    }
+                  },
+                  "Property": "Matchup"
+                }
+              },
+              "queryRef": "SeriesOdds.Matchup",
+              "nativeQueryRef": "Matchup",
+              "displayName": "Matchup"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SeriesOdds"
+                    }
+                  },
+                  "Property": "rs_h2h_games"
+                }
+              },
+              "queryRef": "SeriesOdds.rs_h2h_games",
+              "nativeQueryRef": "rs_h2h_games",
+              "displayName": "RS games"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SeriesOdds"
+                    }
+                  },
+                  "Property": "team_a_game_win"
+                }
+              },
+              "queryRef": "SeriesOdds.team_a_game_win",
+              "nativeQueryRef": "team_a_game_win",
+              "displayName": "1st team wins game"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SeriesOdds"
+                    }
+                  },
+                  "Property": "team_a_series_win"
+                }
+              },
+              "queryRef": "SeriesOdds.team_a_series_win",
+              "nativeQueryRef": "team_a_series_win",
+              "displayName": "1st team wins series"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "SeriesOdds"
+                    }
+                  },
+                  "Property": "Top Score"
+                }
+              },
+              "queryRef": "SeriesOdds.Top Score",
+              "nativeQueryRef": "Top Score",
+              "displayName": "Likeliest score"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "SeriesOdds"
+                  }
+                },
+                "Property": "order"
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Key series odds'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

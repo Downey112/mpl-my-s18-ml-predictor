@@ -1,0 +1,83 @@
+table SeriesOdds
+	lineageTag: 14ed3d33-5703-563e-9e4e-ee8a9df24734
+
+	column order
+		dataType: int64
+		formatString: 0
+		lineageTag: 85b47dfc-0feb-5d23-8584-743d90e5a97e
+		summarizeBy: none
+		sourceColumn: order
+
+	column stage
+		dataType: string
+		lineageTag: 6ba01de7-c6be-5101-a054-a391bca2d56f
+		summarizeBy: none
+		sourceColumn: stage
+
+	column Matchup
+		dataType: string
+		lineageTag: eb585ea0-a88d-57c7-800a-041dd4c893bd
+		summarizeBy: none
+		sourceColumn: Matchup
+
+	column best_of
+		dataType: int64
+		formatString: 0
+		lineageTag: 82563610-1a33-5cf7-aa2a-c24d5a50af2e
+		summarizeBy: none
+		sourceColumn: best_of
+
+	column rs_h2h_matches
+		dataType: string
+		lineageTag: 020f1afe-bc70-573e-90bc-af27ea8e6109
+		summarizeBy: none
+		sourceColumn: rs_h2h_matches
+
+	column rs_h2h_games
+		dataType: string
+		lineageTag: 01d2ff6e-ca5e-5e4c-90d0-bcb68f4efda9
+		summarizeBy: none
+		sourceColumn: rs_h2h_games
+
+	column team_a_game_win
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 7bce15c4-4086-528b-815f-ca60f0a9893f
+		summarizeBy: none
+		sourceColumn: team_a_game_win
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column team_a_series_win
+		dataType: double
+		formatString: 0.0%
+		lineageTag: b958603f-ab68-5fed-9c14-bb2173d03c9e
+		summarizeBy: none
+		sourceColumn: team_a_series_win
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Top Score'
+		dataType: string
+		lineageTag: 666076c3-1496-5d33-b178-ebea517703c7
+		summarizeBy: none
+		sourceColumn: Top Score
+
+	partition SeriesOdds = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(
+				        File.Contents(DataFolder & "\mpl_my_s18_series_odds.csv"),
+				        [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]
+				    ),
+				    Headers = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    Typed = Table.TransformColumnTypes(Headers, {{"order", Int64.Type}, {"stage", type text}, {"team_a", type text}, {"team_b", type text}, {"best_of", Int64.Type}, {"rs_h2h_matches", type text}, {"rs_h2h_games", type text}, {"team_a_game_win_pct", type number}, {"team_a_series_win_pct", type number}, {"top_scoreline", type text}, {"top_scoreline_pct", type number}}, "en-US"),
+				    AddMatchup = Table.AddColumn(Typed, "Matchup", each [team_a] & " vs " & [team_b], type text),
+				    AddGame = Table.AddColumn(AddMatchup, "team_a_game_win", each [team_a_game_win_pct] / 100, type number),
+				    AddSeries = Table.AddColumn(AddGame, "team_a_series_win", each [team_a_series_win_pct] / 100, type number),
+				    AddTop = Table.AddColumn(AddSeries, "Top Score", each [top_scoreline] & " (" & Number.ToText([top_scoreline_pct], "0", "en-US") & "%)", type text),
+				    Result = Table.SelectColumns(AddTop, {"order", "stage", "Matchup", "best_of", "rs_h2h_matches", "rs_h2h_games", "team_a_game_win", "team_a_series_win", "Top Score"})
+				in
+				    Result
+
+	annotation PBI_ResultType = Table
+

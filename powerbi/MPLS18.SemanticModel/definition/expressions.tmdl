@@ -1,0 +1,5 @@
+expression DataFolder = "C:\Users\courts\mpl-my-s18-ml-predictor\data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 61ab90b3-8836-5150-ac52-7367cd0e8f8a
+
+	annotation PBI_ResultType = Text
+
