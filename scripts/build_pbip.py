@@ -231,7 +231,7 @@ table_tmdl(
             "VAR _third = MAXX ( _row3, Forecast[Team] )\n"
             "VAR _thirdVal = MAXX ( _row3, Forecast[Grand Final] )\n"
             "RETURN\n"
-            "    _second & \" \" & FORMAT ( _secondVal / 100, \"0%\" ) & \"  vs  \" & _third & \" \" & FORMAT ( _thirdVal / 100, \"0%\" )",
+            "    _second & \" \" & FORMAT ( _secondVal / 100, \"0%\" ) & \" vs \" & _third & \" \" & FORMAT ( _thirdVal / 100, \"0%\" )",
             None,
             "Cards",
         ),
@@ -477,7 +477,7 @@ def kpi(page, name, x, label, field, z):
     visual(
         page, name, "card", x, 72, 296, 96, z,
         query={"queryState": {"Values": {"projections": [proj(field)]}}},
-        objects={"labels": [{"properties": {"fontSize": num(22), "color": color(DARK)}}],
+        objects={"labels": [{"properties": {"fontSize": num(20), "color": color(DARK)}}],
                  "categoryLabels": [{"properties": {"show": b(False)}}]},
         container={
             "title": [{"properties": {"show": b(True), "text": s(label.upper()), "fontSize": num(9),
@@ -541,9 +541,9 @@ visual(
                 proj(col("SeriesOdds", "stage"), "Stage"),
                 proj(col("SeriesOdds", "Matchup"), "Matchup"),
                 proj(col("SeriesOdds", "rs_h2h_games"), "RS games"),
-                proj(col("SeriesOdds", "team_a_game_win"), "1st team wins game"),
-                proj(col("SeriesOdds", "team_a_series_win"), "1st team wins series"),
-                proj(col("SeriesOdds", "Top Score"), "Likeliest score"),
+                proj(col("SeriesOdds", "team_a_game_win"), "Game win"),
+                proj(col("SeriesOdds", "team_a_series_win"), "Series win"),
+                proj(col("SeriesOdds", "Top Score"), "Top score"),
             ]},
         },
         "sortDefinition": {"sort": [{"field": col("SeriesOdds", "order"), "direction": "Ascending"}]},
