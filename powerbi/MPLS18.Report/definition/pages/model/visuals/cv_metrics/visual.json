@@ -140,7 +140,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Cross-validation (56 matches, 112 directed rows)'"
+                  "Value": "'CROSS-VALIDATION (56 MATCHES, 112 DIRECTED ROWS)'"
                 }
               }
             }

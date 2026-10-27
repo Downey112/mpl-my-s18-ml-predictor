@@ -3,7 +3,7 @@
   "name": "header",
   "position": {
     "x": 24,
-    "y": 12,
+    "y": 8,
     "z": 1000,
     "height": 56,
     "width": 1232,
@@ -19,11 +19,11 @@
               {
                 "textRuns": [
                   {
-                    "value": "MPL MY Season 18 Playoffs Forecast",
+                    "value": "MPL MY S18  ·  PLAYOFFS FORECAST",
                     "textStyle": {
-                      "fontFamily": "Segoe UI Semibold",
-                      "fontSize": "18pt",
-                      "color": "#0F172A"
+                      "fontFamily": "Segoe UI Black",
+                      "fontSize": "20pt",
+                      "color": "#F2C14E"
                     }
                   }
                 ]
@@ -31,11 +31,11 @@
               {
                 "textRuns": [
                   {
-                    "value": "50,000 simulated brackets  ·  Oct 28 – Nov 1, 2026  ·  Top 2 qualify for the M8 World Championship  ·  Model built on the 56-match regular season",
+                    "value": "50,000 SIMULATED BRACKETS  ·  OCT 28 – NOV 1, 2026  ·  TOP 2 QUALIFY FOR THE M8 WORLD CHAMPIONSHIP",
                     "textStyle": {
-                      "fontFamily": "Segoe UI",
+                      "fontFamily": "Segoe UI Semibold",
                       "fontSize": "9pt",
-                      "color": "#64748B"
+                      "color": "#8DA2C0"
                     }
                   }
                 ]

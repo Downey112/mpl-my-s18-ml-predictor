@@ -5,7 +5,7 @@ table FeatureWeights
 		formatString: +0.00;-0.00;0.00
 		lineageTag: d7874d69-788f-5441-946f-3943fc0fba7d
 
-	measure 'Feature Weight Color' = IF ( [Feature Weight] >= 0, "#16A34A", "#DC2626" )
+	measure 'Feature Weight Color' = IF ( [Feature Weight] >= 0, "#34D399", "#F87171" )
 		lineageTag: d1f67dff-b084-572a-ace3-9985c3758eb6
 
 	column feature

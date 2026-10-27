@@ -3,7 +3,7 @@
   "name": "header",
   "position": {
     "x": 24,
-    "y": 12,
+    "y": 8,
     "z": 1000,
     "height": 56,
     "width": 1232,
@@ -19,11 +19,11 @@
               {
                 "textRuns": [
                   {
-                    "value": "How much to trust the forecast",
+                    "value": "MODEL CHECK  ·  HOW MUCH TO TRUST THE FORECAST",
                     "textStyle": {
-                      "fontFamily": "Segoe UI Semibold",
-                      "fontSize": "18pt",
-                      "color": "#0F172A"
+                      "fontFamily": "Segoe UI Black",
+                      "fontSize": "20pt",
+                      "color": "#F2C14E"
                     }
                   }
                 ]
@@ -31,11 +31,11 @@
               {
                 "textRuns": [
                   {
-                    "value": "Leave-one-week-out cross-validation and logistic regression weights  ·  read with the limitations below",
+                    "value": "LEAVE-ONE-WEEK-OUT CROSS-VALIDATION AND LOGISTIC REGRESSION WEIGHTS  ·  READ WITH THE LIMITATIONS BELOW",
                     "textStyle": {
-                      "fontFamily": "Segoe UI",
+                      "fontFamily": "Segoe UI Semibold",
                       "fontSize": "9pt",
-                      "color": "#64748B"
+                      "color": "#8DA2C0"
                     }
                   }
                 ]

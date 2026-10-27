@@ -103,7 +103,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Where each team finishes (by seed)'"
+                  "Value": "'WHERE EACH TEAM FINISHES (BY SEED)'"
                 }
               }
             }
