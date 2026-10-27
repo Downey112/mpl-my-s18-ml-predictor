@@ -69,22 +69,41 @@
               "displayName": "Probability"
             }
           ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Forecast"
+                    }
+                  },
+                  "Property": "Champion %"
+                }
+              },
+              "queryRef": "Forecast.Champion %",
+              "nativeQueryRef": "Champion %",
+              "displayName": "Win the title"
+            }
+          ]
         }
       },
       "sortDefinition": {
         "sort": [
           {
             "field": {
-              "Column": {
+              "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Teams"
+                    "Entity": "Forecast"
                   }
                 },
-                "Property": "team"
+                "Property": "Champion %"
               }
             },
-            "direction": "Ascending"
+            "direction": "Descending"
           }
         ]
       }
@@ -103,7 +122,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'WHERE EACH TEAM FINISHES (BY SEED)'"
+                  "Value": "'WHERE EACH TEAM FINISHES'"
                 }
               }
             }
