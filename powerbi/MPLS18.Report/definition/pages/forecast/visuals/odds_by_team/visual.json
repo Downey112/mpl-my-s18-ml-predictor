@@ -113,6 +113,26 @@
             }
           }
         }
+      ],
+      "dataPoint": [
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#3BC9F5'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Forecast.Grand Final %"
+          }
+        }
       ]
     },
     "visualContainerObjects": {
@@ -129,7 +149,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Title and M8 odds by team'"
+                  "Value": "'TITLE AND M8 ODDS BY TEAM'"
                 }
               }
             }

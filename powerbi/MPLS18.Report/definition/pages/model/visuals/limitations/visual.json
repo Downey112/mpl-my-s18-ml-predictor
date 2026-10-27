@@ -19,11 +19,11 @@
               {
                 "textRuns": [
                   {
-                    "value": "Limitations",
+                    "value": "LIMITATIONS",
                     "textStyle": {
-                      "fontFamily": "Segoe UI Semibold",
+                      "fontFamily": "Segoe UI Bold",
                       "fontSize": "11pt",
-                      "color": "#0F172A"
+                      "color": "#F2C14E"
                     }
                   }
                 ]
@@ -35,7 +35,7 @@
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "9pt",
-                      "color": "#64748B"
+                      "color": "#8DA2C0"
                     }
                   }
                 ]
@@ -47,7 +47,7 @@
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "9pt",
-                      "color": "#64748B"
+                      "color": "#8DA2C0"
                     }
                   }
                 ]
@@ -59,7 +59,7 @@
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "9pt",
-                      "color": "#64748B"
+                      "color": "#8DA2C0"
                     }
                   }
                 ]
@@ -71,7 +71,7 @@
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "9pt",
-                      "color": "#64748B"
+                      "color": "#8DA2C0"
                     }
                   }
                 ]

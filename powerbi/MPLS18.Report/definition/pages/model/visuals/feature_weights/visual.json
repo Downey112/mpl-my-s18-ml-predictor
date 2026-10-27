@@ -118,7 +118,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Logistic regression weights (full-data fit, standardised)'"
+                  "Value": "'LOGISTIC REGRESSION WEIGHTS (FULL-DATA FIT, STANDARDISED)'"
                 }
               }
             }

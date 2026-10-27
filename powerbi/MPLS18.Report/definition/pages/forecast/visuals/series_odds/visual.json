@@ -170,7 +170,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Key series odds'"
+                  "Value": "'KEY SERIES ODDS'"
                 }
               }
             }
